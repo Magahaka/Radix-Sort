@@ -77,7 +77,7 @@ namespace RadixSort
                 Counting_sort(arr, exp);
             }
 
-            string plates = null;
+            string plates;
             NumberPlate plate;
             for (int i = 0; i < items.Size; i++)
             {
@@ -85,43 +85,6 @@ namespace RadixSort
                 plates = BackToPlate(plate, arr[i]);
                 items.Set(plate, i);
             }         
-        }
-
-        public static void Counting_sort(LinkedList<int> list, int exp)
-        {
-            LinkedList<int> D = new LinkedList<int>();
-            LinkedList<int>[] lists = new LinkedList<int>[10];
-            for (int i = 0; i < lists.Length; i++)
-            {
-                lists[i] = new LinkedList<int>();
-            }
-
-            // Skaiciu daznumas
-            int number = 0;
-            for (list.Beginning(); list.Exists(); list.Next())
-            {
-                number = (list.Take() / exp % 10);
-                lists[number].Add(list.Take());
-                list.Remove(list.TakeNode());
-            }
-
-            for (int i = 0; i < lists.Length; i++)
-            {
-                for (list.Beginning(); list.Exists(); list.Next())
-                {
-                    //list.Add(lists)
-                }
-            }
-        }
-
-        public static void Radix_sort(LinkedList<NumberPlate> list)
-        {
-            LinkedList<int> intList = new LinkedList<int>();
-            AddIntToLinkedList(list, intList);
-            for (int exp = 1; exp < Math.Pow(10, 9); exp *= 10)
-            {
-                Counting_sort(intList, exp);
-            }
         }
 
         public static void Print(PlatesContainer plates)
@@ -165,20 +128,6 @@ namespace RadixSort
             }
         }
 
-        public static void AddIntToLinkedList(LinkedList<NumberPlate> plateList, LinkedList<int> intList)
-        {
-            NumberPlate number;
-            int plateCode = 0;
-
-            for (plateList.Beginning(); plateList.Exists(); plateList.Next())
-            {
-                number = new NumberPlate();
-                number = plateList.Take();
-                plateCode = number.GetPlateCode();
-                intList.Add(plateCode);
-            }
-        }
-
         public static PlatesContainer DoContainer(PlatesContainer plates)
         {
             NumberPlate plate;
@@ -191,21 +140,9 @@ namespace RadixSort
             return plates;
         }
 
-        public static LinkedList<NumberPlate> DoList(LinkedList<NumberPlate> plateList, int n)
-        {
-            NumberPlate plate;
-            for (int i = 0; i < n; i++)
-            {
-                plate = new NumberPlate();
-                plate.Generator();
-                plateList.Add(plate);
-            }
-            return plateList;
-        }
-
         public static void Test_Array_List(int seed)
         {
-            int n = 8;
+            int n = 500;
 
             //Console.WriteLine("\n ARRAY \n");
             //PlatesContainer container = new PlatesContainer(n);
@@ -215,15 +152,103 @@ namespace RadixSort
             //Radix_sort(container);
             //Print(container);
 
-            //LinkedList<string> pl = new LinkedList<string>();
-
-            //pl.AddA("ABC 001");
-            //pl.AddA("ABC 002");
-            //pl.AddA("ABC 003");
-
             LinkedList<NumberPlate> plateList = new LinkedList<NumberPlate>(); 
             plateList = DoList(plateList, n);
-            Radix_sort(plateList);
+            Radix_sort(plateList, n);
+        }
+
+        public static LinkedList<NumberPlate> DoList(LinkedList<NumberPlate> plateList, int n)
+        {
+            NumberPlate plate;
+            for (int i = 0; i < n; i++)
+            {
+                plate = new NumberPlate();
+                plate.Generator();
+                plateList.InsertNodeAtEnd(plate);
+            }
+            return plateList;
+        }
+
+        public static void AddIntToLinkedList(LinkedList<NumberPlate> plateList, LinkedList<int> intList)
+        {
+            NumberPlate number;
+            int plateCode;
+
+            var currentNode = plateList.Head;
+            while ((currentNode != null) && (currentNode.Data != null))
+            {
+                number = currentNode.Data;
+                plateCode = number.GetPlateCode();
+                intList.InsertNodeAtEnd(plateCode);
+                currentNode = currentNode.Next;
+            }
+        }
+
+        public static void Counting_sort(LinkedList<int> list, int exp)
+        {
+            LinkedList<int> D = new LinkedList<int>();
+            LinkedList<int>[] lists = new LinkedList<int>[10];
+            for (int i = 0; i < lists.Length; i++)
+            {
+                lists[i] = new LinkedList<int>();
+            }
+
+            // Skaiciu daznumas
+            int number;
+            var currentNode = list.Head;
+            while ((currentNode != null) && (currentNode.Data != 0))
+            {
+                number = (currentNode.Data / exp % 10);
+                lists[number].InsertNodeAtEnd(currentNode.Data);
+                list.DeleteFirstNode();
+                currentNode = currentNode.Next;
+            }
+
+            // Sudeda isrikiuotas reiksmes atgal i originalu list'a
+            for (int i = 0; i < lists.Length; i++)
+            {
+                currentNode = lists[i].Head;
+                while ((currentNode != null) && (currentNode.Data != 0))
+                {
+                    list.InsertNodeAtEnd(currentNode.Data);
+                    currentNode = currentNode.Next;
+                }
+            }
+        }
+
+        public static void Radix_sort(LinkedList<NumberPlate> list, int n)
+        {
+            LinkedList<int> intList = new LinkedList<int>();
+            LinkedList<string> sortedList = new LinkedList<string>();
+            AddIntToLinkedList(list, intList);
+            for (int exp = 1; exp < Math.Pow(10, 9); exp *= 10)
+            {
+                Counting_sort(intList, exp);
+            }
+
+            string plates;
+            NumberPlate plate;
+
+            var currentNode = intList.Head;
+            for (int i = 0; i < n; i++)
+            {
+                plate = new NumberPlate();
+                plates = BackToPlate(plate, currentNode.Data);
+                sortedList.InsertNodeAtEnd(plates);
+                currentNode = currentNode.Next;
+            }
+
+            Print(sortedList);
+        }
+
+        public static void Print(LinkedList<string> sortedList)
+        {
+            var currentNode = sortedList.Head;
+            while (currentNode != null)
+            {
+                Console.WriteLine("{0}", currentNode.Data);
+                currentNode = currentNode.Next;
+            }
         }
     }
 

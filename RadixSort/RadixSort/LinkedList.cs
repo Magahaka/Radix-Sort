@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 using System.Text;
 
 
@@ -9,109 +10,107 @@ namespace RadixSort
 {
     public class LinkedList<T> : IEnumerable<T> where T : IComparable<T>, IEquatable<T>
     {
-        public sealed class Node<T>
+        public class Node<T>
         {
-            public Node<T> Right;
-            public Node<T> Left;
-
-            public T data;
-
-            public Node(T value, Node<T> left, Node<T> right)
+            public T Data { get; }
+            public Node<T> Next { get; set; }
+            public Node(T data)
             {
-                Left = left;
-                Right = right;
-                data = value;
+                Data = data;
             }
         }
 
-        private Node<T> first;
-        private Node<T> last;
-        private Node<T> current;
-        public int size;
+        public Node<T> Head { get; set; }
 
-        public LinkedList()
+        public void InsertNodeAtEnd(T element)
         {
-            first = null;
-            last = null;
-            current = null;
-            size = 0;
-        }
+            Node<T> temp = Head;
+            var node = new Node<T>(element);
 
-        public void Add(T element)
-        {
-            var node = new Node<T>(element, last, null);
-
-            if (first != null)
+            if (Head == null)
             {
-                last.Right = node;
-                last = node;
+                Head = node;
             }
             else
             {
-                first = node;
-                last = node;
+                while (temp.Next != null)
+                {
+                    temp = temp.Next;
+                }
+                temp.Next = node;
             }
-            current = node;
-            size++;
         }
 
-        public void Remove(Node<T> node)
+        public void InsertNodeAtFirst(Node<T> node)
         {
-            if (node == first)
+            node.Next = Head;
+            Head = node;
+        }
+
+        public void InsertNodeAtAGivenPosition(Node<T> node, int indexPosition)
+        {
+            int counter = 0;
+            Node<T> temp = Head;
+
+            while (temp.Next != null)
             {
-                first = first.Right;
-                
+                if (indexPosition == counter)
+                {
+                    node.Next = temp.Next;
+                    temp.Next = node;
+
+                    return;
+                }
+                temp = temp.Next;
+                counter++;
             }
-            else if (node == last)
+        }
+
+        public void DeleteFirstNode()
+        {
+            Head = Head.Next;
+        }
+
+        public void DeleteLastNode()
+        {
+            Node<T> temp = Head;
+            Node<T> previousNode = Head;
+
+            while (temp.Next != null)
             {
-                last = last.Left;
+                previousNode = temp;
+                temp = temp.Next;
             }
-            else if (node.Left != null)
+            previousNode.Next = null;
+        }
+
+        public void DeleteNodeFromMiddle(int nodeIndexPosition)
+        {
+            int counter = 0;
+            Node<T> temp = Head;
+            Node<T> previousNode = Head;
+
+            while (temp.Next != null)
             {
-                node.Left.Right = node.Right;
+                if (nodeIndexPosition == counter)
+                {
+                    previousNode.Next = temp.Next;
+                    return;
+                }
+                previousNode = temp;
+                temp = temp.Next;
+                counter++;
             }
-            else if (node.Right != null)
+        }
+
+        public void Traverse()
+        {
+            while (Head.Next != null)
             {
-                node.Right.Left = node.Left;
+                Head = Head.Next;
+                Debug.WriteLine(Head.Data);
             }
-            size--;
         }
-
-        public void Beginning()
-        {
-            current = first;
-        }
-
-        public void End()
-        {
-            current = last;
-        }
-
-        public void Next()
-        {
-            current = current.Right;
-        }
-
-        public void Previous()
-        {
-            current = current.Left;
-        }
-
-        public bool Exists()
-        {
-            return current != null;
-        }
-
-        public T Take()
-        {
-            return current.data;
-        }
-
-        public Node<T> TakeNode()
-        {
-            return current;
-        }
-
 
         public IEnumerator<T> GetEnumerator()
         {

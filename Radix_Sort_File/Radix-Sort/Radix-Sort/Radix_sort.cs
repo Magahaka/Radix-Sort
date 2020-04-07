@@ -10,13 +10,13 @@ namespace Radix_Sort
         {
             int seed = (int)DateTime.Now.Ticks & 0x0000FFFF;
             // Parodo nesurusiuotus ir surusiuotus duomenys array ir list faile
-            Test_File_Array_List(seed);
+            //Test_File_Array_List(seed);
             Test_Array_List_File();
         }
 
         public static void Test_Array_List_File()
         {
-            int[] amounts = { 100, 200, 300 };
+            int[] amounts = { 100, 200, 400, 800, 1600, 3200, 6400 };
             Console.WriteLine("\n----------------------------Sorting Tests in External Memory-----------------------------");
             Console.WriteLine("---------------------------------FILE ARRAY RADIX SORT---------------------------------");
             Console.WriteLine(string.Format("{0, -10} {1, -10}", "Amount", "Time (ms)"));
@@ -43,7 +43,7 @@ namespace Radix_Sort
                 var watch = System.Diagnostics.Stopwatch.StartNew();
                 Radix_Sort(myfilearray);
                 watch.Stop();
-                Console.WriteLine(string.Format("{0, -10} {1, -10}", n, watch.Elapsed));
+                Console.WriteLine(string.Format("{0, -10} {1, -10}", n, watch.Elapsed.TotalMilliseconds));
             }
         }
 
@@ -56,115 +56,120 @@ namespace Radix_Sort
             FileAccess.ReadWrite))
             {
                 var watch = System.Diagnostics.Stopwatch.StartNew();
-                Radix_Sort(myfilelist);
+                Radix_Sort(myfilelist, n);
                 watch.Stop();
-                Console.WriteLine(string.Format("{0, -10} {1, -10}", n, watch.Elapsed));
+                Console.WriteLine(string.Format("{0, -10} {1, -10}", n, watch.Elapsed.TotalMilliseconds));
             }
         }
 
-        public static void CountingSort(DataList items, int exp)
-        {
-            UTF8Encoding encoder = new UTF8Encoding();
-            double prevdata, currentdata;
-            double first, second;
-            Byte[] forChange1 = new byte[12];
-            Byte[] forChange2 = new byte[12];
-            string firstPlate = "";
-            string secondPlate = "";
-            string thirdPlate = "";
-            NumberPlate plate1, plate2, plate3;
-            string[] partsFirst;
-            string[] partsSecond;
-            for (int i = items.Length - 1; i >= 0; i--)
-            {
-                BitConverter.GetBytes(items.Head()).CopyTo(forChange1, 0);
-                firstPlate = encoder.GetString(forChange1, 1, 7);
-                partsFirst = firstPlate.Split(' ');
-                plate1 = new NumberPlate(partsFirst[0], partsFirst[1]);
 
-                currentdata = plate1.GetPlateCode();
-                for (int j = 1; j <= i; j++)
-                {
-                    prevdata = currentdata;
-                    plate3 = new NumberPlate();
-                    plate3.BackToPlate(prevdata);
-                    thirdPlate = "\a" + plate3.Letters + " " + plate3.Number + "\0\0\0\0";
-                    forChange1 = Encoding.UTF8.GetBytes(thirdPlate);
-                    BitConverter.GetBytes(items.Next()).CopyTo(forChange2, 0);
-                    secondPlate = encoder.GetString(forChange2, 1, 7);
-                    partsSecond = secondPlate.Split(' ');
-                    plate2 = new NumberPlate(partsSecond[0], partsSecond[1]);
-
-                    currentdata = plate2.GetPlateCode();
-
-                    first = prevdata / exp % 10;
-                    second = currentdata / exp % 10;
-                    if (first > second)
-                    {
-                        items.Swap(BitConverter.ToDouble(forChange2), BitConverter.ToDouble(forChange1));
-                        currentdata = prevdata;
-                    }
-                }
-            }
-        }
-
-        public static void CountingSort(DataArray items, int exp)
-        {
-            UTF8Encoding encoder = new UTF8Encoding();
-            Byte[] forChange = new byte[16];
-            double first, second;
-            int i, j;
-            NumberPlate plate1;
-            NumberPlate plate2;
-            for (int z = 0; z < items.Length; z++)
-            {
-                i = 0;
-                j = 1;
-                while (j < items.Length)
-                {
-                    BitConverter.GetBytes(items[i]).CopyTo(forChange, 0);
-                    BitConverter.GetBytes(items[j]).CopyTo(forChange, 8);
-                    string firstPlate = encoder.GetString(forChange, 1, 7);
-                    string[] partsFirst = firstPlate.Split(' ');
-                    plate1 = new NumberPlate(partsFirst[0], partsFirst[1]);
-
-                    string secondPlate = encoder.GetString(forChange, 9, 7);
-                    string[] partsSecond = secondPlate.Split(' ');
-                    plate2 = new NumberPlate(partsSecond[0], partsSecond[1]);
-
-                    first = plate1.GetPlateCode() / exp % 10;
-                    second = plate2.GetPlateCode() / exp % 10;
-                    if (first > second)
-                    {
-                        items.Swap(j, BitConverter.ToDouble(forChange, 0), BitConverter.ToDouble(forChange, 8));
-                    }
-                    i++;
-                    j++;
-                }
-            }
-        }
+        //public static void Radix_Sort(DataList items)
+        //{
+        //    for (int exp = 1; exp < Math.Pow(10, 9); exp *= 10)
+        //    {
+        //        CountingSort(items, exp);
+        //    }
+        //}
 
         public static void Radix_Sort(DataArray items)
         {
             for (int exp = 1; exp < Math.Pow(10, 9); exp *= 10)
             {
-                CountingSort(items, exp);
+                Counting_Sort(items, exp);
             }
         }
 
-        public static void Radix_Sort(DataList items)
+        public static void Counting_Sort(DataArray items, int exp)
+        {
+            string resultsFile = "results.txt";
+            string countFile = "count.txt";
+            int n = items.Length;
+
+            MyFileArray results = new MyFileArray(n, resultsFile);
+            MyFileArray count = new MyFileArray(10, countFile);
+
+            using (count.fs = new FileStream(countFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                using (results.fs = new FileStream(resultsFile, FileMode.Open, FileAccess.ReadWrite))
+                {
+                    int value;
+                    for (int i = 0; i < n; i++)
+                    {
+                        value = items[i] / exp % 10;
+                        count[value] = count[value] + 1;
+                    }
+
+                    for (int i = 1; i < 10; i++)
+                    {
+                        count[i] = count[i] + count[i - 1];
+                    }
+
+                    for (int i = n-1; i >= 0 ; i--)
+                    {
+                        value = items[i] / exp % 10;
+                        results[count[value] - 1] = items[i];
+                        count[value] = count[value] - 1;
+                    }
+
+                    for (int i = 0; i < n; i++)
+                    {
+                        items[i] = results[i];
+                    }
+                }
+            }
+        }
+
+        public static void Radix_Sort(DataList items, int seed)
         {
             for (int exp = 1; exp < Math.Pow(10, 9); exp *= 10)
             {
-                CountingSort(items, exp);
+                Counting_Sort(items, exp, seed);
+            }
+        }
+
+        public static void Counting_Sort(DataList items, int exp, int seed)
+        {
+            string resultsFile = "results.dat";
+            string countFile = "count.dat";
+            int n = items.Length;
+
+            MyFileList results = new MyFileList(n, resultsFile);
+            MyFileList count = new MyFileList(n, countFile);
+
+            using (count.fs = new FileStream(countFile, FileMode.Open, FileAccess.ReadWrite))
+            {
+                using (results.fs = new FileStream(resultsFile, FileMode.Open, FileAccess.ReadWrite))
+                {
+                    int temp;
+                    var current = items.Head();
+                    while (current != 0)
+                    {
+                        current = current / exp % 10;
+                        count.Set(current, count.Value(current) + 1);
+                        current = items.Next();
+                    }
+
+                    for (int i = 1; i < 10; i++)
+                    {
+                        count.Set(i, count.Value(i) + count.Value(i - 1));
+                    }
+
+                    for (int i = n - 1; i >= 0; i--)
+                    {
+                        temp = items.Value(i) / exp % 10;
+                        results.Set(count.Value(temp) - 1, items.Value(i));
+                        count.Set(temp, count.Value(temp) - 1);
+                    }
+                    items.OverWrite(results);
+                }
             }
         }
 
         public static void Test_File_Array_List(int seed)
         {
-            int n = 5;
+            int n = 10;
             string filename;
-            filename = @"mydataarray.txt";
+            filename = @"mydataarraytest.txt";
             //filename = @"mydataarray.dat";
             MyFileArray myfilearray = new MyFileArray(filename, n);
             using (myfilearray.fs = new FileStream(filename, FileMode.Open, FileAccess.ReadWrite))
@@ -174,14 +179,14 @@ namespace Radix_Sort
                 Radix_Sort(myfilearray);
                 myfilearray.Print(n);
             }
-            filename = @"mydatalist.dat";
+            filename = @"mydatalisttest.txt";
             MyFileList myfilelist = new MyFileList(filename, n);
             using (myfilelist.fs = new FileStream(filename, FileMode.Open,
             FileAccess.ReadWrite))
             {
                 Console.WriteLine("\n FILE LIST \n");
                 myfilelist.Print(n);
-                Radix_Sort(myfilelist);
+                Radix_Sort(myfilelist, seed);
                 myfilelist.Print(n);
             }
         }
@@ -190,20 +195,35 @@ namespace Radix_Sort
     {
         protected int length;
         public int Length { get { return length; } }
-        public abstract double this[int index] { get; }
-        public abstract Byte[] TakeFromFile(int index);
+        public abstract int this[int index] { get; set; }
         public abstract void Swap(int j, double a, double b);
-        public abstract void Set(int index);
         public void Print(int n)
         {
-            UTF8Encoding encoder = new UTF8Encoding();
-            Byte[] data = new byte[8];
             for (int i = 0; i < n; i++)
             {
-                BitConverter.GetBytes(this[i]).CopyTo(data, 0);
-                Console.Write(" {0:F5} ", encoder.GetString(data));
+                string plate = ConvertToString(this[i]);
+                Console.Write(" {0:F5} ", plate);
             }
             Console.WriteLine();
+        }
+
+        public string ConvertToString(int number)
+        {
+            string plateString = number.ToString();
+            string firstLetter = plateString.Substring(0, 2);
+            string secondLetter = plateString.Substring(2, 2);
+            string thirdLetter = plateString.Substring(4, 2);
+            string numbers = plateString.Substring(6, 3);
+
+            char one = (char)int.Parse(firstLetter);
+            char two = (char)int.Parse(secondLetter);
+            char three = (char)int.Parse(thirdLetter);
+
+            string plateLetters = one.ToString() + two.ToString() + three.ToString();
+
+            string result = plateLetters + " " + numbers;
+
+            return result;
         }
     }
 
@@ -211,21 +231,40 @@ namespace Radix_Sort
     {
         protected int length;
         public int Length { get { return length; } }
-        public abstract double Head();
-        public abstract double Next();
+        public abstract int Head();
+        public abstract int Next();
         public abstract void Swap(double a, double b);
+        public abstract void OverWrite(DataList items);
+        public abstract void Set(int index, int value);
+        public abstract int Value(int index);
         public void Print(int n)
         {
-            UTF8Encoding encoder = new UTF8Encoding();
-            Byte[] data = new byte[12];
-            BitConverter.GetBytes(Head()).CopyTo(data, 0);
-            Console.Write(" {0:F5} ", encoder.GetString(data));
-            for (int i = 0; i < n; i++)
+            Console.Write(" {0:F5} ", ConvertToString(Head()));
+            for (int i = 1; i < n; i++)
             {
-                BitConverter.GetBytes(Next()).CopyTo(data, 0);
-                Console.Write(" {0:F5} ", encoder.GetString(data));
+                string plate = ConvertToString(Next());
+                Console.Write(" {0:F5} ", plate);
             }
             Console.WriteLine();
+        }
+
+        public string ConvertToString(int number)
+        {
+            string plateString = number.ToString();
+            string firstLetter = plateString.Substring(0, 2);
+            string secondLetter = plateString.Substring(2, 2);
+            string thirdLetter = plateString.Substring(4, 2);
+            string numbers = plateString.Substring(6, 3);
+
+            char one = (char)int.Parse(firstLetter);
+            char two = (char)int.Parse(secondLetter);
+            char three = (char)int.Parse(thirdLetter);
+
+            string plateLetters = one.ToString() + two.ToString() + three.ToString();
+
+            string result = plateLetters + " " + numbers;
+
+            return result;
         }
     }
 }

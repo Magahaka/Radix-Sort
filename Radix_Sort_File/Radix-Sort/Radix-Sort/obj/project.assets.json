@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Povilas\\Documents\\Visual Studio 2019\\Algoritmai\\RadixSort2\\Radix-Sort\\Radix-Sort\\Radix-Sort.csproj",
+      "projectUniqueName": "C:\\Users\\Povilas\\Desktop\\RadixSort2\\Radix-Sort\\Radix-Sort\\Radix-Sort.csproj",
       "projectName": "Radix-Sort",
-      "projectPath": "C:\\Users\\Povilas\\Documents\\Visual Studio 2019\\Algoritmai\\RadixSort2\\Radix-Sort\\Radix-Sort\\Radix-Sort.csproj",
+      "projectPath": "C:\\Users\\Povilas\\Desktop\\RadixSort2\\Radix-Sort\\Radix-Sort\\Radix-Sort.csproj",
       "packagesPath": "C:\\Users\\Povilas\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Povilas\\Documents\\Visual Studio 2019\\Algoritmai\\RadixSort2\\Radix-Sort\\Radix-Sort\\obj\\",
+      "outputPath": "C:\\Users\\Povilas\\Desktop\\RadixSort2\\Radix-Sort\\Radix-Sort\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Povilas\\AppData\\Roaming\\NuGet\\NuGet.Config",

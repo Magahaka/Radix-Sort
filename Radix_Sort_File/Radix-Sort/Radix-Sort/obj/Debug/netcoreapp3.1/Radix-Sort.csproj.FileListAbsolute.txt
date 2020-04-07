@@ -9,3 +9,14 @@ C:\Users\Povilas\Documents\Visual Studio 2019\Algoritmai\RadixSort2\Radix-Sort\R
 C:\Users\Povilas\Documents\Visual Studio 2019\Algoritmai\RadixSort2\Radix-Sort\Radix-Sort\bin\Debug\netcoreapp3.1\Radix-Sort.pdb
 C:\Users\Povilas\Documents\Visual Studio 2019\Algoritmai\RadixSort2\Radix-Sort\Radix-Sort\obj\Debug\netcoreapp3.1\Radix-Sort.dll
 C:\Users\Povilas\Documents\Visual Studio 2019\Algoritmai\RadixSort2\Radix-Sort\Radix-Sort\obj\Debug\netcoreapp3.1\Radix-Sort.pdb
+C:\Users\Povilas\Desktop\RadixSort2\Radix-Sort\Radix-Sort\bin\Debug\netcoreapp3.1\Radix-Sort.exe
+C:\Users\Povilas\Desktop\RadixSort2\Radix-Sort\Radix-Sort\bin\Debug\netcoreapp3.1\Radix-Sort.deps.json
+C:\Users\Povilas\Desktop\RadixSort2\Radix-Sort\Radix-Sort\bin\Debug\netcoreapp3.1\Radix-Sort.runtimeconfig.json
+C:\Users\Povilas\Desktop\RadixSort2\Radix-Sort\Radix-Sort\bin\Debug\netcoreapp3.1\Radix-Sort.runtimeconfig.dev.json
+C:\Users\Povilas\Desktop\RadixSort2\Radix-Sort\Radix-Sort\bin\Debug\netcoreapp3.1\Radix-Sort.dll
+C:\Users\Povilas\Desktop\RadixSort2\Radix-Sort\Radix-Sort\bin\Debug\netcoreapp3.1\Radix-Sort.pdb
+C:\Users\Povilas\Desktop\RadixSort2\Radix-Sort\Radix-Sort\obj\Debug\netcoreapp3.1\Radix-Sort.csprojAssemblyReference.cache
+C:\Users\Povilas\Desktop\RadixSort2\Radix-Sort\Radix-Sort\obj\Debug\netcoreapp3.1\Radix-Sort.AssemblyInfoInputs.cache
+C:\Users\Povilas\Desktop\RadixSort2\Radix-Sort\Radix-Sort\obj\Debug\netcoreapp3.1\Radix-Sort.AssemblyInfo.cs
+C:\Users\Povilas\Desktop\RadixSort2\Radix-Sort\Radix-Sort\obj\Debug\netcoreapp3.1\Radix-Sort.dll
+C:\Users\Povilas\Desktop\RadixSort2\Radix-Sort\Radix-Sort\obj\Debug\netcoreapp3.1\Radix-Sort.pdb
